@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Test for tideman code
+
+./tideman Alice Bob Charlie << _EOF_
+5
+Alice
+Charlie
+Bob
+Alice
+Charlie
+Bob
+Bob
+Charlie
+Alice
+Bob
+Charlie
+Alice
+Charlie
+Alice
+Bob
+_EOF_

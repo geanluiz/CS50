@@ -1,0 +1,6 @@
+check50:
+  checks:
+    hello world:
+       -run: tideman
+        stdout: Hello, world!
+        exit: 0

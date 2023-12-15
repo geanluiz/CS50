@@ -1,0 +1,30 @@
+
+sort1 uses: Bubble
+    sorted5000 = 0.050s
+    sorted50000 = 1.564s
+
+    reversed5000 = 0.094s
+    reversed10000 = 0.242s
+    reversed50000 = 5.644s
+
+    random50000 = 6.256s
+
+sort2 uses: Merge
+    sorted5000 = 0.044s
+    sorted50000 = 1.302s
+
+    reversed5000 = 0.032s
+    reversed10000 = 0.070s
+    reversed50000 = 1.376s
+
+    random50000 = 1.573s
+
+sort3 uses: Selection
+    sorted5000 = 0.048s
+    sorted50000 = 2.954s
+
+    reversed5000 = 0.054s
+    reversed10000 = 0.148s
+    reversed50000 = 4.287s
+
+    random50000 = 3.133s
