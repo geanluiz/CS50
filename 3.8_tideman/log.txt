@@ -1,0 +1,27 @@
+Number of voters: 5
+Rank 1: Rank 2: Rank 3: 
+
+Rank 1: Rank 2: Rank 3: 
+
+Rank 1: Rank 2: Rank 3: 
+
+Rank 1: Rank 2: Rank 3: 
+
+Rank 1: Rank 2: Rank 3: 
+
+0 over 1
+2 over 0
+2 over 1
+
+0 over 0: 0
+0 over 1: 3
+0 over 2: 2
+
+1 over 0: 2
+1 over 1: 0
+1 over 2: 2
+
+2 over 0: 3
+2 over 1: 3
+2 over 2: 0
+
