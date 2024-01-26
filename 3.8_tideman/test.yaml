@@ -1,6 +1,0 @@
-check50:
-  checks:
-    hello world:
-       f-run: tideman
-        stdout: Hello, world!
-        exit: 0

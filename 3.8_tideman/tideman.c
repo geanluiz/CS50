@@ -65,6 +65,7 @@ int main(int argc, string argv[])
 
     pair_count = 0;
     int voter_count = get_int("Number of voters: ");
+    printf("%i\n", voter_count); //test
 
     // Query for votes
     for (int i = 0; i < voter_count; i++)
@@ -105,6 +106,7 @@ bool vote(int rank, string name, int ranks[])
         if (strcmp(name, candidates[i]) == 0)
         {
             ranks[rank] = i;
+            // printf("%i\n", ranks[rank]); //test
             return true;
         }
     }
@@ -114,19 +116,27 @@ bool vote(int rank, string name, int ranks[])
 // Update preferences given one voter's ranks
 void record_preferences(int ranks[])
 {
+    printf("\n"); // test
     // TODO
-    int c = 0;
-    for (int i = 0; i <= candidate_count; i++, c++)
+    // Loops through preferences' first candidate
+    for (int i = 0; i < candidate_count; i++)
     {
-        // Locks first candidate in comparison
-        if (ranks[c] == i)
+        // Loops through preferences' second candidate
+        for (int j = 0; j < candidate_count; j++)
         {
-            // Loops through second candidates
-            for (int j = i; j < candidate_count; j++)
+            if (i != j)
             {
-                if (ranks[j] == j)
+                // Left pointer through ranks
+                for (int l = 0; l < candidate_count; l++)
                 {
-                    preferences[i][j]++;
+                    // Right pointer through ranks
+                    for (int r = l; r < candidate_count; r++)
+                    {
+                        if (i == ranks[l] && j == ranks[r])
+                        {
+                            preferences[i][j]++;
+                        }
+                    }
                 }
             }
         }
@@ -138,22 +148,17 @@ void record_preferences(int ranks[])
 void add_pairs(void)
 {
     // TODO
-    for (int i = 0; i < candidate_count - 1; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
-        for (int j = i; j < candidate_count; j++)
+        for (int j = 0; j < candidate_count; j++)
         {
             if (preferences[i][j] > preferences[j][i])
             {
-                pairs[i].winner = i;
-                pairs[i].loser = j;
+                pairs[pair_count].winner = i;
+                pairs[pair_count].loser = j;
                 pair_count++;
             }
         }
-    }
-    for (int x = 0; x < pair_count; x++)
-    {
-        printf("%i ", preferences[pairs[x].winner][pairs[x].loser]);
-        printf("- %s %s\n", candidates[pairs[x].winner], candidates[pairs[x].loser]);
     }
     return;
 }
@@ -161,23 +166,31 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    // TODO
-
-    int cache = 0;
-
-    for (int i = 0; i < pair_count - 1; i++)
+    for (int z = 0; z < pair_count; z++) //test
     {
-        int winner = pairs[i].winner;
-        int loser = pairs[i].loser;
-
-        if (preferences[winner][loser] > cache)
+        printf("%i over %i\n", pairs[z].winner, pairs[z].loser);
+    }
+    printf("\n");
+    for (int x = 0; x < candidate_count; x++) // test
+    {
+        for (int y = 0; y < candidate_count; y++)
         {
-            cache = preferences[winner][loser];
+            printf("%i over %i: %i\n", x, y, preferences[x][y]);
         }
+        printf("\n");
     }
 
+    // TODO
+    /*
 
+        avaliable
+        list of candidates - candidates[]
+        list of pairs (winners/losers) - pairs[]
+        list of preferences (candidate a vs b with votes) - preferences[i][j]
 
+        sort pairs
+
+    */
     /*
             strength = number of votes who prefer the winner candidate
         sort pairs array in descending order by strength
