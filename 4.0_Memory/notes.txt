@@ -1,0 +1,232 @@
+// Memory
+
+_Hexadecimal colors
+
+  Written with an '#' followed by two numbers for red, two for green and two for blue,
+for example #FF0000 for plain red #00FF00 for green and #0000FF for blue.
+
+  These numbers are in hexadecimal, namely:
+  0 1 2 3 4 5 6 7 8 9 A B C D E F, respectively 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 and 15,
+so #FFFFFF is actually 255 255 255, the ammount of each color and is composed like binary.
+The first number to the right elevated to 1 and the second to 16, so: 01, would be 1.
+0F would be 15. 10 would be 16.
+
+  Each pair of those characters would take 1 byte, so 8 bits, and the whole color size is 3 bytes.
+
+
+
+_Memory
+
+  An int takes 4 bytes.
+  Pointers take 8 bytes/ 64bits (storing biggers addresses, as opposed to 4 bytes).
+
+  Each piece of data in the memory ocupies an hexadecimal address.
+
+
+  A pointer is a data type (similar to an 'int'), that stores a memory address, literally.
+  One can declare a pointer like follows:
+    int n = 50;
+    int *p = &n;
+  That way we take the address of 'n', and store it in 'p'.
+
+So:
+  -'*' while declaring a variable sets it's type as 'pointer'
+  -'*' inside a function calls what is stored at given memory address and
+  -'&' is used to specify from which variable are we taking the address of
+
+Examples:
+  int *p;              // Declares a pointer to an int, named p
+  printf("%i\n", *p);  // Prints what's into n(go to that address)
+  printf("%p\n", &n);  // Prints n's address
+
+
+
+_Strings (char* )
+
+  Every string terminates with the null character '\0' always taking an extra byte
+and is essentially a char array and the variable itself is a pointer to the first character
+of that array, so '\0' marks the end of the string.
+
+  It can be treated as an array ([i]).
+
+  So for 'string s = "HI!"', for example:
+    's' would store the address 0x123 for 'H' (s[0])
+    'I' would be stored at 0x124 (s[1])
+    '!' would be at 0x125 (s[2])
+    and '\0' at 0x126 (s[3])
+
+  In 'char *s = "HI!";' the double quotes tells the compiler to create an array
+with those characters, put a '\0' at the end and store the address of the first character in 's'.
+
+
+
+_typedef
+
+  syntax: 'typedef char *string;'
+    // 'typedef' with the current type and the result type
+
+
+
+_Pointer arithmetics
+
+  We're able to make operation with the addresses like:
+    printf("%c\n", *s);        // Prints char #1
+    printf("%c\n", *(s + 1));  // Prints char #2
+    printf("%c\n", *(s + 2));  // Prints char #3
+
+
+
+_String comparison
+
+  If you assign a string value to another string like 'string t = s;'
+you will acctually get the address of 's', so 't' will be 0x... And the changes in 't' will affect 's'.
+
+
+
+_malloc and free(stdlib)
+
+
+  Malloc takes the number of bytes you need and then returns the address of the first byte.
+
+    strcpy syntax from scratch:
+      char *t = malloc(strlen(s) + 1);
+
+  That will create essentially a blank string named 't', with the size of 's'.
+('+ 1' is a placeholder for '\0') and than you use a loop for copying each character.
+
+  **ALWAYS REMEMBER TO PUT '\0' AFTER A STRING TO PREVENT SEGMENTATION FAULT
+  Similarly, always put an error exception after the use of 'malloc' or 'get_string',
+so if there's no memory avaliable and int returns 'NULL', the program should stop immediately.
+
+  When the program is done using this space of memory you should use 'free(t)' so give
+the space allocated back to the computer.
+
+  Actual syntax for strcpy:
+    strcpy(destination, source);
+
+  sizeof(int) assures that malloc will get exactly the size of an int in the current computer.
+
+
+
+_valgrind (cli)
+
+  syntax:  valgrind ./program
+    // Used for memory debugging.
+
+
+
+_scope
+
+  The values changes inside a function have no result elsewhere (passing by value)
+  We solve that by using pointers (passing by reference)*
+
+  The computers memory is organized in a stack, from top to bottom:
+
+    machine code
+      globals
+        heap
+         .
+         .
+         .
+         .
+       stack
+
+  Machine code, stores the binary necessary for the program
+  Global variables are avaliable anywhere inside the program
+  Heap is where malloc allocates memory for us
+  and Stack stores the variables
+
+  The memory fills up from the stack and down from the heap, so if full, they may colide
+(heap overflow/stack overflow)
+
+  The stack is composed bottom-up:
+
+        .
+        .
+        ^
+   swap(function)
+       main
+
+  And as functions are used and closed, they get removed from the stack from top to bottom
+
+
+  Here is a function that swaps two numbers using pointers:*
+
+    void swap(int *a, int *b)
+    {
+        int tmp = *a;  // '*' here means 'go to'
+        *a = *b;
+        *b = tmp;      // "Put tmp where b is pointing to
+    }
+
+    swap(&x, &y);      // call the function passing the addresses
+
+
+
+_scanf
+
+  get_int:
+    {
+        int n;
+        printf("n: ");
+        scanf("%i", &n);
+        printf("n: %i\n", n);
+    }
+
+
+get_string: (wrong)
+    {
+        char *s; // This will cause seg. fault
+        printf("n: ");
+        scanf("%s", s);
+        printf("s: %s\n", s);
+    }
+
+
+get_string: (correct)
+    {
+        char s[4];
+        printf("n: ");
+        scanf("%s", s); // w/o & because s it's already a pointer
+        printf("s: %s\n", s);
+    }
+    // A better aproach would be check how many characters we get from the user
+  and allocate the correct ammount of memory... or using 'gets()'
+
+
+
+_file I/O
+
+
+    -fopen()
+
+    FILE *file = fopen("file_name.csv", "a");
+    // 'a' for append, 'r' read, 'w' write, 'rb' reads binary
+    // returns the address in which the file is opend in memory to a pointer variable named file of the type FILE
+
+        include:
+        if (file == NULL) {return 1;}
+
+
+    -fprintf()
+        fprintf(file, "%s,%s\n", name, number);
+
+
+    -fclose()
+        fclose(file);
+
+
+
+  #include <stdint.h>
+  typedef uint8_t BYTE // gives us an empty 8bit value
+
+
+    -fread() // reads file bytes
+      while (fread(&b, sizeof(b), 1, src) != 0)
+      {
+        fwrite(&b, sizeof(b), 1, dst);
+            // '&b' is where to find the bytes
+            // sizeof here is the size of the portions
+            // 1 portion at a time
+            // which file from/to
+      }
