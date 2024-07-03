@@ -1,9 +1,9 @@
+#include <memory.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <memory.h>
 
-typedef uint8_t BYTE;
+int block = 512;
 
 int main(int argc, char *argv[])
 {
@@ -24,34 +24,43 @@ int main(int argc, char *argv[])
     }
 
     // While there's still data left to read from the memory card
-    BYTE cache[512];
-    BYTE id[] = {255, 216, 255};
-    BYTE end[] = {0, 0, 0};
+    uint8_t cache[block];
+    uint8_t id[] = {0xFF, 0xD8, 0xFF};
+    uint8_t fourth = 0xE0;
+    uint8_t end[] = {0x00, 0x00, 0x00};
 
     int count = 0;
     char name[8];
-    sprintf(name, "%03i.jpg", count);
 
-    while (1)
+    FILE *img = NULL;
+
+    while (fread(&cache, 1, block, card) == block)
     {
-        fread(&cache, sizeof(BYTE), 512, card);
-
-        if (feof(card))
-        {
-            break;
-        }
-
         // Create JPEG from the data
-        if (memcmp(cache, &id, sizeof(id)) == 0 && cache[3] >= 224) // Image header found
+        sprintf(name, "%03i.jpg", count);
+
+        if (memcmp(cache, &id, sizeof(id)) == 0 &&
+            (cache[3] & 0xF0) == fourth) // Image header found
         {
-            FILE *img = fopen(name, "w");
-            while(memcmp(cache, &end, sizeof(end)) != 0) // While not the end of image
+            if (img != NULL) // If there is an opened image
             {
-                fwrite(&cache, sizeof(BYTE), 512, img); // Write data to file
+                fclose(img);
+                count++;
+                sprintf(name, "%03i.jpg", count);
+                img = fopen(name, "w");
+                fwrite(&cache, 1, block, img); // Write data to file
             }
-            fclose(img);
-            count++;
+            else
+            {
+                img = fopen(name, "w");
+                fwrite(&cache, 1, block, img); // Write data to file
+            }
+        }
+        else if (img != NULL)
+        {
+            fwrite(&cache, 1, block, img); // Write data to file
         }
     }
+    fclose(img);
     fclose(card);
 }
