@@ -27,12 +27,20 @@ node *table[N]; // Array of pointers
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
-    int index = hash(word);
+    char w[LENGTH + 1];
+    char *d = w;
+    while (*word != '\0')
+    {
+        *d++ = (isupper(*word))? tolower(*word++): *word++;
+    }
+    *d = '\0';
+
+    int index = hash(w); // Try to compare hashes instead to see if it is faster
     node *tmp = table[index];
 
     while (tmp != NULL)
     {
-        if (strcmp(word, tmp->word) == 0)
+        if (strcmp(w, tmp->word) == 0)
         {
             return true;
         }
@@ -46,7 +54,7 @@ unsigned int hash(const char *word)
 {
     unsigned int hash = 4993;
     char c;
-    while ((c = tolower(*word++))) // Maybe move it to check()
+    while ((c = *word++))
     {
         hash = ((hash << 2) + hash) + c;
     }
@@ -86,7 +94,8 @@ bool load(const char *dictionary)
         new->next = table[i];
         table[i] = new;
     }
-    if (errno != 0) return false;
+    if (errno != 0)
+        return false;
 
     fclose(dict_file);
     return true;
