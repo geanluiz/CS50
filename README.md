@@ -1,1 +1,1 @@
-This repo stores the projects I made at Harvard's CS50X/2023
+This repo stores the projects I made at Harvard's CS50X/2024
