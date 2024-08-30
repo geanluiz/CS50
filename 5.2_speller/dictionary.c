@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #include "dictionary.h"
 
@@ -19,7 +20,7 @@ typedef struct node
 static int w_count = 0;
 
 // Number of buckets in hash table
-const unsigned int N = 1200;
+const unsigned int N = 30011;
 
 // Hash table
 node *table[N]; // Array of pointers
@@ -27,20 +28,12 @@ node *table[N]; // Array of pointers
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
-    char w[LENGTH + 1];
-    char *d = w;
-    while (*word != '\0')
-    {
-        *d++ = (isupper(*word))? tolower(*word++): *word++;
-    }
-    *d = '\0';
-
-    int index = hash(w); // Try to compare hashes instead to see if it is faster
+    int index = hash(word);
     node *tmp = table[index];
 
     while (tmp != NULL)
     {
-        if (strcmp(w, tmp->word) == 0)
+        if (strcasecmp(word, tmp->word) == 0)
         {
             return true;
         }
@@ -56,6 +49,7 @@ unsigned int hash(const char *word)
     char c;
     while ((c = *word++))
     {
+        c = (c >= 'A' && c <= 'Z') ? (c + 32) : c;
         hash = ((hash << 2) + hash) + c;
     }
     return hash % N;
@@ -113,7 +107,8 @@ bool unload(void)
     errno = 0;
     for (int i = 0; i < N; i++)
     {
-        if (table[i] == NULL) continue;
+        if (table[i] == NULL)
+            continue;
 
         node *tmp = table[i]->next;
         node *prev = table[i];
