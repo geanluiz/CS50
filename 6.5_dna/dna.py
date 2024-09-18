@@ -1,18 +1,42 @@
-import csv
-import sys
+from csv import DictReader
+from sys import argv
 
 
 def main():
 
-    # TODO: Check for command-line usage
+    # Check for command-line usage
+    if len(argv) < 3:
+        print("Wrong usage\nExpected: \"dna.py <database.csv> <sequence.txt>\"")
+        return
 
-    # TODO: Read database file into a variable
-    
-    # TODO: Read DNA sequence file into a variable
+    # Read database file into a variable
+    db = []
+    with open(f"{argv[1]}") as file:
+        reader = DictReader(file)
+        fields = reader.fieldnames[1:]  # type: ignore
+        for row in reader:
+            db.append(row)
 
-    # TODO: Find longest match of each STR in DNA sequence
+    # Read DNA sequence file into a variable
+    with open(f"{argv[2]}") as file:
+        sq = file.read()
 
-    # TODO: Check database for matching profiles
+    # Find longest match of each STR in DNA sequence
+    longest = []
+    for s in fields:
+        longest.append(longest_match(sq, s))
+
+    longest_d = {
+        fields[i]: f'{longest[i]}' for i in range(len(longest))}
+
+    # Check database for matching profiles
+    match = "No match"
+    for person in db:
+        p = person.copy()
+        del p['name']
+        if p == longest_d:
+            match = person['name']
+    print(match)
 
     return
 
@@ -43,11 +67,11 @@ def longest_match(sequence, subsequence):
             # If there is a match in the substring
             if sequence[start:end] == subsequence:
                 count += 1
-            
+
             # If there is no match in the substring
             else:
                 break
-        
+
         # Update most consecutive matches found
         longest_run = max(longest_run, count)
 
