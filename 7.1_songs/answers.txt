@@ -1,0 +1,12 @@
+Based on the averages of energy, valence and danceability
+I think the aura of said listener is more to the purple color
+because although their top songs have more energy and danceability, they are also a little
+introspective as valence shows.
+And as per Spotify's definition "Purple auras tune in to get amped up, entertained,
+and moving while they navigate the twists and turns of their day."
+
+Yet I don't think just these averages alone are enough to tell a person's personality
+as they are just 3 variables. I think we should at least use more caracteristics about the songs,
+maybe weigh those variables based on the number of songs as well.
+A step further maybe would be to use AI and train it with a user input as to how they fell
+when they chose each song.
