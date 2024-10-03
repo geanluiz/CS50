@@ -1,0 +1,18 @@
+https://blog.nubank.com.br/tipos-de-investimentos/
+https://portaldoinvestimento.com.br/artigos/cabeca-de-milionario/um-breve-resumo-sobre-investimentos
+
+4 html pages
+
+10 distinct tags other than <html>, <head>, <body>, and <title>
+
+one feature of bootstrap
+
+one stylesheet with 5 css selectors with 5 properties each
+
+one feature of javascript
+
+TODO: looks nice on any device
+
+TODO: "You should also create a text file, specification.txt, which lists the 10 HTML tags
+and 5 CSS properties you’ve used, as well as a brief (one-sentence) description of
+how you chose to use JavaScript and Bootstrap."
