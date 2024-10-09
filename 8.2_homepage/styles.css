@@ -7,6 +7,7 @@
     display: flex;
     justify-content: space-between;
     padding: 15px 20px;
+    background-color: var(--bs-secondary-color);
 }
 
 .nav-pills {
@@ -21,6 +22,16 @@
     background-color: white;
     border-radius: 40px;
     position: center;
+    cursor: pointer;
+}
+
+.nav-link {
+    color: var(--bs-light) !important;
+}
+
+.active {
+    background-color: var(--bs-info-bg-subtle) !important;
+    color: var(--bs-dark-text-emphasis) !important;
 }
 
 @media (min-width: 768px){
