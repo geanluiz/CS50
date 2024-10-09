@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-
-    /* video: https://www.youtube.com/watch?v=2j_kBqpFK-g */
-
-
     if (localStorage.getItem('mode') === null){
         localStorage.setItem('mode', 'dark');
     }
@@ -12,30 +8,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     body.setAttribute('data-bs-theme', mode);
 
-    const icon = document.querySelector('#theme-img');
+    const icon = document.querySelector('.material-symbols-outlined');
 
     if (mode === 'light'){
-        icon.src = 'dark-mode.png';
+        icon.innerHTML = 'mode_night';
         body.setAttribute('data-bs-theme', 'light');
     } else if (mode === 'dark'){
-        icon.src = 'light-mode.png';
+        icon.innerHTML = 'sunny';
         body.setAttribute('data-bs-theme', 'dark');
     };
 
     icon.addEventListener('click', function() {
-        console.log('click');
-        console.log(mode);
-
         if (body.getAttribute('data-bs-theme') == 'light'){
-            icon.src = 'light-mode.png';
+            icon.innerHTML = 'sunny';
             localStorage.setItem('mode', 'dark');
             body.setAttribute('data-bs-theme', 'dark');
-            console.log(mode);
         } else if (body.getAttribute('data-bs-theme') === 'dark'){
-            icon.src = 'dark-mode.png';
+            icon.innerHTML = 'mode_night';
             localStorage.setItem('mode', 'light');
             body.setAttribute('data-bs-theme', 'light');
-            console.log(mode);
         };
     });
 });
