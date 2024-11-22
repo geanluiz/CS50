@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     padding: 15px 20px;
-    background-color: var(--bs-secondary-color);
+    background-color: rgb(var(--bs-tertiary-color-rgb));
 }
 
 .nav {
@@ -13,7 +13,7 @@
 }
 
 .nav-link {
-    color: var(--bs-light) !important;
+    color: rgb(var(--bs-body-bg-rgb)) !important;
 }
 
 .active {

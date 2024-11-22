@@ -1,15 +1,8 @@
-4 html pages
+Html tags:
+    meta, link, script, ul, li, a, div, h, p and span.
 
-10 distinct tags other than <html>, <head>, <body>, and <title>
+CSS properties:
+    display, flex-direction, position, right and top.
 
-feature of bootstrap
-
-stylesheet with 5 css selectors with 5 properties each
-
-feature of javascript
-
-looks nice on any device
-
-TODO: "You should also create a text file, specification.txt, which lists the 10 HTML tags
-and 5 CSS properties you’ve used, as well as a brief (one-sentence) description of
-how you chose to use JavaScript and Bootstrap."
+Use of JS and Bootstrap:
+    I used Javascript along with Bootstrap to implement a button that toggles between dark/light mode on the pages.
