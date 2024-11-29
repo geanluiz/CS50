@@ -1,0 +1,4 @@
+key aspects
+    enter items individually
+    be able to edit/delete items
+    
