@@ -1,0 +1,24 @@
+body {
+    background-color: lightgray;
+    color: #020202;
+}
+
+.nav {
+    border: 1px solid #020202;
+    height: 40px;
+}
+
+.group {
+    display: flex;
+}
+
+.menu {
+    border: 1px solid #020202;
+    width: 60px;
+    padding-bottom: 800px;
+}
+
+.main {
+    border: 1px solid #020202;
+    margin-right: auto;
+}

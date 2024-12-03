@@ -1,9 +1,19 @@
+https://blog-cdn.everhour.com/blog/wp-content/uploads/2023/08/emburse-spend.jpg
+https://blog-cdn.everhour.com/blog/wp-content/uploads/2023/08/everhour-expenses.jpg
+https://uizard.io/templates/web-app-templates/expense-tracking-web-app/
+https://www.zoho.com/pt-br/creator/apps/custom-expense-tracking-management-software.html
+https://w3layouts.com/template/collective-admin-panel-website-template/
+https://startbootstrap.com/previews/sb-admin
+https://blog-cdn.everhour.com/blog/wp-content/uploads/2023/08/rydoo-expenses.jpg
+
+
+
 key aspects(good outcome)
     log in
     enter items individually
     persist items
     be able to edit/delete items
-    show page containing average days between item dates
+    show search functionality showing average days between item dates
 
 stretch features(better outcome)
     reload table without reloading entire page
@@ -15,3 +25,17 @@ awesome features(best outcome)
     profile page
     (ads) allowing other users to sign up
     partner sharing
+
+
+    tables
+-users
+ user_id, username, password
+
+-categories
+ category_id, name
+
+-items
+ item_id, item_name, category
+
+-history
+ transaction_id, user, item, date, price
