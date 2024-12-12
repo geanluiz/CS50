@@ -3,23 +3,3 @@ body {
     color: #020202;
     padding: 3px;
 }
-
-.nav {
-    border: 1px solid #020202;
-    height: 60px;
-}
-
-.group {
-    display: flex;
-}
-
-.menu {
-    border: 1px solid #020202;
-    width: 70px;
-    height: 885px;
-}
-
-.main {
-    border: 1px solid #020202;
-    width: 1880px;
-}
