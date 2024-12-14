@@ -1,0 +1,15 @@
+body {
+  background-color: #343a40;
+  color: white;
+}
+.sidebar {
+  background-color: #212529;
+  height: 100vh;
+}
+.sidebar a {
+  color: white;
+}
+
+a {
+  text-decoration: none;
+}
