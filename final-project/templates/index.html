@@ -53,9 +53,9 @@
 					{% if products %}
 						{% for product in products %}
 							<li class="list-group-item text-start">
-								<a href="{{ request.route_path('index', id=product.id }}">{{ product.name }}</a> <!-- ---------- -->
+								<a href="{{ url_for('product', id=product.id) }}">Name: {{ product.name }}</a>
 								<div>
-									<span>{{ product.category }}</span>, <span>{{ product.price }}</span>
+									<span>Category: {{ product.category }}</span>, <span>Price: {{ product.price }}</span>
 									<button class="btn p-1 position-absolute top-50 end-0" onclick="editProduct('{{ product.id }}')"><span class="material-symbols-outlined">
 										edit_square
 										</span></button>

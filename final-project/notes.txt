@@ -35,7 +35,7 @@ awesome features(best outcome)
  category_id, name
 
 -items
- item_id, item_name, category
+ item_id, item_name, category_id
 
 -history
- transaction_id, user, item, date, price
+ transaction_id, user_id, item_id, date, price

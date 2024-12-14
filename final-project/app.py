@@ -1,6 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-import sys
+import statistics
+import time
 
 # Configure application
 app = Flask(__name__)
@@ -15,15 +16,15 @@ products = [
         "id": 0,
         "name": "arroz",
         "category": 1,
-        "price": 4,
-        "date": "12/12/2024",
+        "price": "R$4.00",
+        "date":  time.strptime("12/12/2024", "%d/%m/%Y")
     },
     {
-        "id": 1,
+        "id": 0,
         "name": "arroz",
         "category": 1,
-        "price": 4,
-        "date": "12/11/2024",
+        "price": "R$10.00",
+        "date": time.strptime("12/11/2024", "%d/%m/%Y")
     }
 ]
 
@@ -34,8 +35,7 @@ def brl(value):
 @app.route("/", methods=["GET", "POST"])
 def index():
     # print(products[0], file=sys.stderr)
-    index = int(request.args.get("id"))
-    return render_template("index.html", selected_product=products[index], products=products)
+    return render_template("index.html", products=products)
 
 new_product = {}
 
@@ -51,3 +51,13 @@ def add_product():
     }
     products.append(new_product)
     return redirect("/")
+
+
+@app.route("/product", methods=["GET", "POST"])
+def product():
+    selected = products[int(request.args.get("id"))]
+    """ avg = []
+    for product in products:
+        avg += product['date']
+    average_days = avg / len(products) """
+    return render_template("index.html", selected_product=selected, products=products)

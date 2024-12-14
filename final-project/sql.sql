@@ -1,0 +1,47 @@
+/* 
+    -users
+    user_id, username, password
+
+    -categories
+    category_id, name
+
+    -items
+    item_id, item_name, category_id
+
+    -history
+    transaction_id, user_id, item_id, date, price 
+ */
+
+CREATE TABLE users (
+id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+username TEXT NOT NULL UNIQUE,
+pwd      TEXT NOT NULL
+);
+
+CREATE TABLE categories (
+id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+cat_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE items (
+id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+item_name TEXT NOT NULL UNIQUE,
+cat_id    INTEGER NOT NULL,
+    FOREIGN KEY (cat_id) REFERENCES categories(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE TABLE history (
+id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+user_id    INTEGER NOT NULL,
+item_id    INTEGER NOT NULL UNIQUE,
+trans_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+price      NUMERIC NOT NULL,
+    FOREIGN KEY (user_id) 
+        REFERENCES users(id),
+    FOREIGN KEY (item_id) 
+        REFERENCES items(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
