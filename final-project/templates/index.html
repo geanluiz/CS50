@@ -10,7 +10,7 @@
 </head>
 <body data-bs-theme="dark">
     <div class="d-flex">
-		<nav class="sidebar p-3">
+		<nav class="sidebar p-3" style="width: 170px;">
             <h2><a href="/">Product Tracker</a></h2>
             <form method="POST" action="{{ url_for('add_product')}}">
                 <div class="form-group">
@@ -18,18 +18,24 @@
                     <input type="text" class="form-control" id="name" name="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="category">Category</label>
-                    <input type="text" class="form-control" id="category" name="category" required>
-                </div>
+                    <label for="name">Category</label>
+					<select class="form-select" id="floatingSelect" aria-label="Floating label select example">
+					  {% for category in categories %}
+					  <option value="{{ category.id }}">{{ category.name}}</option>
+					  {% endfor %}
+					</select>
+				</div>
                 <div class="form-group">
                     <label for="price">Price</label>
-                    <input type="number" class="form-control" id="price" name="price" required step="0.01" min="0" placeholder="0,00">
+                    <input type="number" class="form-control" id="price" name="price" required step="0.01" min="0" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label for="date">Purchase Date</label>
                     <input type="date" class="form-control" id="date" name="date" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Product</button>
+                <div class="form-group mt-2">
+					<button type="submit" class="btn btn-primary">Add Product</button>
+				</div>
             </form>
             <hr>
 		</nav>
@@ -40,7 +46,7 @@
 				{% if selected_product %}
 					<h3>{{ selected_product.name }}</h3>
 					<p>Category: {{ selected_product.category }}</p>
-					<p>Price: ${{ selected_product.price }}</p>
+					<p>Price: {{ brl(selected_product.price) }}</p>
 					<p>Average Days Between Purchases: {{ average_days }} days</p>
 				{% else %}
 					<p>Select a product to see details.</p>
@@ -55,7 +61,7 @@
 							<li class="list-group-item text-start">
 								<a href="{{ url_for('product', id=product.id) }}">Name: {{ product.name }}</a>
 								<div>
-									<span>Category: {{ product.category }}</span>, <span>Price: {{ product.price }}</span>
+									<span>Category: {{ product.category }}</span>, <span>Price: {{ brl(product.price) }}</span>
 									<button class="btn p-1 position-absolute top-50 end-0" onclick="editProduct('{{ product.id }}')"><span class="material-symbols-outlined">
 										edit_square
 										</span></button>

@@ -1,16 +1,3 @@
-/* 
-    -users
-    user_id, username, password
-
-    -categories
-    category_id, name
-
-    -items
-    item_id, item_name, category_id
-
-    -history
-    transaction_id, user_id, item_id, date, price 
- */
 
 CREATE TABLE users (
 id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -35,13 +22,11 @@ cat_id    INTEGER NOT NULL,
 CREATE TABLE history (
 id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 user_id    INTEGER NOT NULL,
-item_id    INTEGER NOT NULL UNIQUE,
-trans_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+item_id    INTEGER NOT NULL,
+t_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
 price      NUMERIC NOT NULL,
-    FOREIGN KEY (user_id) 
-        REFERENCES users(id),
-    FOREIGN KEY (item_id) 
-        REFERENCES items(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (item_id) REFERENCES items(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 );
