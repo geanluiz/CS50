@@ -70,6 +70,7 @@ def add_product():
 
     # Check if the category and product already exists
     name = None
+    category = None
 
     for product in products:
         if product.name == request.form.get("name"):
@@ -78,7 +79,7 @@ def add_product():
         if product.category == request.form.get("category"):
             category = product.category
     
-    if not category:
+    if category == None:
         db.execute(text(
             "INSERT INTO categories (cat_name) VALUES (:category)"
         ), {"category": request.form.get("category")})
@@ -150,3 +151,30 @@ def product():
         avg_days = 0
     
     return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days)
+
+
+@app.route("/edit", methods=["POST"])
+def edit_product():
+    """Edit a product in the database"""
+
+    # Loads all products from the database
+    products = db.execute(text(
+        """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date FROM history 
+            JOIN users ON user_id = users.id 
+            JOIN items ON item_id = items.id 
+            JOIN categories ON items.cat_id = categories.id
+            WHERE user_id = :user
+            ORDER BY t_date"""
+    ), {"user": 1}).fetchall() 
+    
+    # Select the product to edit
+    selected = None
+    for product in products:
+        if product.hist_id == int(request.args.get("edit")):
+            selected = product
+
+    db.execute(text(
+        """UPDATE items SET item_name = :name WHERE id = :id"""
+    ), {"name": request.form.get("name"), "id": selected.id})
+
+    return redirect("/")
