@@ -20,9 +20,7 @@
 <body data-bs-theme="dark">
     <div class="d-flex">
 		<button class="btn d-sm-none align-self-start" style="width: 20px;" type="button" data-bs-toggle="offcanvas" data-bs-backdrop="false" data-bs-target="#offcanvasResponsive" aria-controls="offcanvasResponsive">
-			<span class="material-symbols-outlined position-relative top-0">
-				menu
-			</span>
+			<span class="material-symbols-outlined position-relative top-0">menu</span>
 		</button>
 		<nav class="offcanvas-sm offcanvas-start bg-body p-3" style="width: 170px; height: 100vh;" tabindex="-1" id="offcanvasResponsive" aria-labelledby="offcanvasResponsiveLabel">
             <div class="offcanvas-body-sm">
@@ -120,7 +118,7 @@
 			</div>
 		</div>
     </div>
-	
+
   	<script>
       	const exampleModal = document.getElementById('exampleModal')
 		if (exampleModal) {
@@ -140,7 +138,7 @@
 
 
 				modalTitle.textContent = `Edit ${product}`
-				modalBodyInput.innerHTML = 
+				modalBodyInput.innerHTML =
 					`<!-- form to edit product -->
 					<form method="POST" action="{{ url_for('edit_product')}}" class="text-start gap-1" id="edit-form">
 						<div class="form-group">
