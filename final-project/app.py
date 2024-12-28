@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request
 from flask_session import Session
 import time
 import math
+import json
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -25,9 +26,9 @@ def brl(value):
     """Format value as BRL."""
     return f"R${value:,.2f}"
 
-def date_format(value):
-    """Format value as time."""
-    return time.strftime("%d/%m/%Y", time.localtime(value))
+def date_format(pattern, value):
+    """Formats dates."""
+    return time.strftime(pattern, time.localtime(value))
 
 app.jinja_env.globals.update(brl=brl, date_format=date_format)
 
@@ -43,7 +44,6 @@ def index():
     )).fetchall()
 
 
-
     products = db.execute(text(
         """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date FROM history
             JOIN users ON user_id = users.id
@@ -51,6 +51,7 @@ def index():
             JOIN categories ON items.cat_id = categories.id
             WHERE user_id = :user"""
     ), {"user": 1}).fetchall()
+
 
     return render_template("index.html", products=products, categories=categories)
 
@@ -150,11 +151,12 @@ def product():
     except ZeroDivisionError:
         avg_days = 0
 
+
     return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days)
 
 
-@app.route("/edit", methods=["POST"])
-def edit_product():
+@app.route("/edit/<id>", methods=["GET", "POST"])
+def edit_product(id):
     """Edit a product in the database"""
 
     # Loads all products from the database
@@ -167,14 +169,28 @@ def edit_product():
             ORDER BY t_date"""
     ), {"user": 1}).fetchall()
 
-    # Select the product to edit
+    categories = db.execute(text(
+        "SELECT id, cat_name AS name FROM categories"
+    )).fetchall()
+
     selected = None
     for product in products:
-        if product.hist_id == int(request.args.get("edit")):
+        if product.hist_id == int(id):
             selected = product
 
-    db.execute(text(
-        """UPDATE items SET item_name = :name WHERE id = :id"""
-    ), {"name": request.form.get("name"), "id": selected.id})
+    if request.method == "GET":
+        return render_template("modal.html", selected_product=selected, categories=categories)
+
+    if request.method == "POST":
+
+        # Select the product to edit
+        selected = None
+        for product in products:
+            if product.hist_id == int(request.args.get("edit")):
+                selected = product
+
+        db.execute(text(
+            """UPDATE items SET item_name = :name WHERE id = :id"""
+        ), {"name": request.form.get("name"), "id": selected.id})
 
     return redirect("/")

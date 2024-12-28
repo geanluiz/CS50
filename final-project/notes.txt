@@ -10,17 +10,17 @@ https://blog-cdn.everhour.com/blog/wp-content/uploads/2023/08/rydoo-expenses.jpg
 
 key aspects(good outcome)
     log in
-    enter items individually
-    persist items
-    be able to edit/delete items
-    show search functionality showing average days between item dates
+    -enter items individually
+    -persist items
+    -be able to edit/delete items
+    -show search functionality showing average days between item dates
 
 stretch features(better outcome)
     reload table without reloading entire page
     charts showing amount spent per month and percentage of each category
     separate page for editing categories
     product photos
-    
+
 awesome features(best outcome)
     profile page
     (ads) allowing other users to sign up
