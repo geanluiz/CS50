@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block main %}
+    <div class="mx-auto text-center"style="width: 300px;height: 100vh">
+        <div class="pt-4" style="height: 200px">
+            <h2 class="offcanvas-title"><a href="/">Product Tracker</a></h2>
+        </div>
+        <div>
+            <h4>Please Sign Up</h4>
+            <form action="/register" method="post" class="text-center">
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100" name="username" placeholder="Username" type="text" autofocus>
+                </div>
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100" name="password" placeholder="Password" type="password">
+                </div>
+                <div class="mb-3">
+                    <input autocomplete="off" class="form-control w-100" name="confirmation" placeholder="Confirm your Password" type="password">
+                </div>
+                <div class="d-flex justify-content-end align-items-center">
+                    <a href="/login" class="me-3">Already Signed Up</a>
+                    <button class="btn btn-primary" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
