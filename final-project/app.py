@@ -1,13 +1,10 @@
+import time
+from functools import wraps
 from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
-import time
-import math
-
+from math import floor
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
-
-from functools import wraps
-
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -72,7 +69,7 @@ def login():
         # Redirect user to home page
         return redirect("/")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    # User reached route via GET
     else:
         return render_template("login.html")
 
@@ -93,7 +90,6 @@ def login_required(f):
 def logout():
     """Log user out"""
 
-    # Forget any user_id
     session.clear()
 
     # Redirect user to login form
@@ -107,11 +103,20 @@ def register():
     # Forget any user_id
     session.clear()
 
-    # User reached route via POST (as by submitting a form via POST)
+
     if request.method == "POST":
+
         # Ensure username was submitted
         if not request.form.get("username"):
             return render_template("apology.html", error="must provide username")
+
+        name = db.execute(text(
+            "SELECT username FROM users WHERE username = :name"
+        ), {"name": request.form.get("username")}).fetchall()
+
+        if name:
+            return render_template("apology.html", error=f"'{name[0].username}' is already taken")
+
 
         # Ensure password was submitted
         if not request.form.get("password"):
@@ -123,18 +128,20 @@ def register():
         if not check_password_hash(hash1, hash2):
             return render_template("apology.html", error="passwords do not match")
 
-        # Query database for username
+
+        # Tries to add new user
         try:
             id = db.execute(text(
-                "INSERT INTO users (username, pwd) VALUES (:user, :pwd)"
+                "INSERT OR IGNORE INTO users (username, pwd) VALUES (:user, :pwd)"
             ), {"user" : request.form.get("username"), "pwd": hash1}).lastrowid
             db.commit()
         except ValueError:
             return render_template("apology.html", error="user already registered")
 
+        # Logs new user
         session["user_id"] = id
 
-        # Redirect user to login page
+
         return redirect("/")
 
     # User reached route via GET
@@ -153,7 +160,6 @@ def index():
     )).fetchall()
     db.commit()
 
-
     products = db.execute(text(
         """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date, username FROM history
             JOIN users ON user_id = users.id
@@ -164,17 +170,28 @@ def index():
     ), {"user": session["user_id"]}).fetchall()
     db.commit()
 
-    return render_template("index.html", products=products, categories=categories, username=products[0].username)
+
+    # Checks if user is logged and returns its username to the sidebar
+    try:
+        username = db.execute(text(
+            "SELECT username FROM users WHERE id = :id"
+        ), {"id": session['user_id']}).fetchone().username
+    except:
+        session.clear()
+        return redirect("/")
+
+
+    return render_template("index.html", products=products, categories=categories, username=username)
 
 
 @app.route("/add_product", methods=["POST"])
 @login_required
 def add_product():
-    """Add a product to the database"""
+    """Adding a product to the database"""
 
     # Loads all categories and products from the database
     products = db.execute(text(
-        """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price FROM history
+        """SELECT history.id AS hist_id, items.id AS item_id, item_name AS name, cat_name AS category, price FROM history
             JOIN users ON user_id = users.id
             JOIN items ON item_id = items.id
             JOIN categories ON items.cat_id = categories.id
@@ -183,19 +200,22 @@ def add_product():
     ), {"user": session["user_id"]}).fetchall()
     db.commit()
 
+
     # Check if the category and product already exists
     name = None
+    id = None
     category = None
 
     for product in products:
         if product.name == request.form.get("name").lower():
             name = product.name
-            id = product.id
+            id = product.item_id
 
     for product in products:
         if product.category == request.form.get("category").lower():
             category = product.category
 
+    # Creates new category/product if it doesn't exists
     if category == None:
         db.execute(text(
             "INSERT OR IGNORE INTO categories (cat_name) VALUES (:category)"
@@ -203,15 +223,18 @@ def add_product():
         db.commit()
 
     if name == None:
-        name_query = db.execute(text(
-            """INSERT INTO items (item_name, cat_id) VALUES (:item,
+        db.execute(text(
+            """INSERT OR IGNORE INTO items (item_name, cat_id) VALUES (:item,
             (SELECT id FROM categories WHERE cat_name = :cat))"""
         ), {"item": request.form.get("name").lower(), "cat": request.form.get("category").lower()})
         db.commit()
 
-        id = name_query.lastrowid
+    id = db.execute(text(
+        "SELECT id FROM items WHERE item_name = :name"
+    ), {"name": request.form.get("name").lower()}).fetchone().id
 
 
+    # Stores date and price
     if request.form.get("date") == None:
         date = ""
     else:
@@ -219,8 +242,10 @@ def add_product():
 
     price = float(request.form.get("price"))
 
+
+    # Inserts item to user history
     db.execute(text(
-        """INSERT INTO history (user_id, item_id, t_date, price) VALUES (:user, :item, :date, :price)"""
+        """INSERT OR IGNORE INTO history (user_id, item_id, t_date, price) VALUES (:user, :item, :date, :price)"""
         ), {"user": session["user_id"], "item": id, "date": date, "price": price})
     db.commit()
     return redirect("/")
@@ -241,7 +266,8 @@ def delete_product(id):
             ORDER BY t_date DESC"""
     ), {"user": session["user_id"]}).fetchall()
 
-    # Select the product to delete
+
+    # Deletes the selected product from db
     selected = None
     for product in products:
         if product.hist_id == int(id):
@@ -271,9 +297,11 @@ def product():
             JOIN items ON item_id = items.id
             JOIN categories ON items.cat_id = categories.id
             WHERE user_id = :user
-            ORDER BY t_date"""
+            ORDER BY t_date DESC"""
     ), {"user": session["user_id"]}).fetchall()
 
+
+    # Calculates average days between each buy
     selected = None
     dt_diff = []
 
@@ -283,14 +311,14 @@ def product():
 
     for product in products:
         if product.name == selected.name:
-            dt_diff.append(math.floor(int(product.t_date) / 86400))
+            dt_diff.append(floor(int(product.t_date) / 86400))
 
 
     dt_sum = 0
     count = 0
     for i in range(len(dt_diff)):
         if i + 1 < len(dt_diff):
-            dt_sum += dt_diff[i + 1] - dt_diff[i]
+            dt_sum += dt_diff[i] - dt_diff[i + 1]
             count += 1
 
     try:
@@ -298,7 +326,7 @@ def product():
     except ZeroDivisionError:
         avg_days = 0
 
-
+    # TODO: change username return logic ####################
 
     return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days, username=products[0].username)
 
@@ -310,7 +338,7 @@ def edit_product(id):
 
     # Loads all products from the database
     products = db.execute(text(
-        """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date FROM history
+        """SELECT history.id AS hist_id, items.id AS item_id, item_name AS name, cat_name AS category, price, t_date FROM history
             JOIN users ON user_id = users.id
             JOIN items ON item_id = items.id
             JOIN categories ON items.cat_id = categories.id
@@ -322,24 +350,68 @@ def edit_product(id):
         "SELECT id, cat_name AS name FROM categories"
     )).fetchall()
 
+    # Selects the product user has chose to edit
     selected = None
     for product in products:
         if product.hist_id == int(id):
             selected = product
 
+    # Returns the modal with the selected product's data
     if request.method == "GET":
         return render_template("modal.html", selected_product=selected, categories=categories)
 
-    if request.method == "POST":
+    # If request method is POST
+    else:
+        # Checks if the category and/or product already exists
+        if request.form.get("name") != selected.name:
 
-        # Select the product to edit
-        selected = None
-        for product in products:
-            if product.hist_id == int(request.args.get("edit")):
-                selected = product
+            category = None
 
-        db.execute(text(
-            """UPDATE items SET item_name = :name WHERE id = :id"""
-        ), {"name": request.form.get("name"), "id": selected.id})
+            for product in products:
+                if product.category == request.form.get("category").lower():
+                    category = product.category
+
+            if category == None:
+                db.execute(text(
+                    "INSERT OR IGNORE INTO categories (cat_name) VALUES (:category)"
+                ), {"category": request.form.get("category").lower()})
+                db.commit()
+
+            db.execute(text(
+                """INSERT OR IGNORE INTO items (item_name, cat_id) VALUES (:item,
+                (SELECT id FROM categories WHERE cat_name = :cat))"""
+            ), {"item": request.form.get("name").lower(), "cat": request.form.get("category").lower()})
+            db.commit()
+
+        item_id = db.execute(text(
+            "SELECT id FROM items WHERE item_name = :name"
+        ), {"name": request.form.get("name").lower()}).fetchone().id
+
+
+        # Stores date and price according to user input
+        if request.form.get("date") == None:
+            date = ""
+        else:
+            date = int(time.mktime(time.strptime(request.form.get("date"), "%Y-%m-%d")))
+
+        price = float(request.form.get("price"))
+
+        # Tries to update current history entry if item is the same
+        try:
+            db.execute(text(
+                """UPDATE history (item_id, t_date, price) VALUES (:user, :item, :date, :price)
+                WHERE id = :id"""
+                ),{"item": item_id, "date": date, "price": price, "id": id})
+            db.commit()
+
+        # Inserts new history entry and deletes current, as user has changed the item name/category
+        except:
+            db.execute(text(
+                """INSERT OR IGNORE INTO history (user_id, item_id, t_date, price) VALUES (:user, :item, :date, :price)"""
+                ), {"user": session["user_id"], "item": item_id, "date": date, "price": price})
+            db.execute(text(
+                "DELETE FROM history WHERE id = :id"
+                ), {"id": id})
+            db.commit()
 
     return redirect("/")
