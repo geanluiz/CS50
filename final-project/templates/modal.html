@@ -1,6 +1,6 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modalLabel">Edit {{ selected_product.name.capitalize() }}</h1>
+        <h1 class="modal-title fs-5" id="modalLabel">Edit Product: {{ selected_product.name.capitalize() }}, {{ date_format("%d %b %Y", selected_product.t_date) }}</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
@@ -26,7 +26,8 @@
                 <label for="date">Purchase Date</label>
                 <input type="date" class="form-control" id="date" name="date" required value="{{ date_format("%Y-%m-%d", selected_product.t_date) }}">
             </div>
-            <div class="form-group mt-2 text-end">
+            <div class="form-group mt-3 text-end">
+                <!-- delete button   -->
                 <a class="pe-2" href="{{ url_for('delete_product', id=selected_product.hist_id) }}" onclick="return confirm('Are you sure?')">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                 </a>

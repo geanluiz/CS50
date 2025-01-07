@@ -1,6 +1,6 @@
 import time
 from functools import wraps
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from math import floor
 from sqlalchemy import create_engine, text
@@ -23,7 +23,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 # Formatting functions
 def usd(value):
-    """Format value as BRL."""
+    """Format value as USD."""
     return f"${value:,.2f}"
 
 def date_format(pattern, value):
@@ -142,11 +142,88 @@ def register():
         session["user_id"] = id
 
 
+        flash("Registered!")
         return redirect("/")
 
     # User reached route via GET
     else:
         return render_template("register.html")
+
+
+@app.route("/change_password", methods=["GET", "POST"])
+@login_required
+def change_pwd():
+    """Lets user change its password"""
+
+    if request.method == "POST":
+        # Ensure password was submitted
+        current = request.form.get("current")
+        if not current:
+            return render_template("apology.html", error="must provide password")
+
+        user_pwd = db.execute(text(
+            "SELECT pwd FROM users WHERE id = :id"
+        ), {"id": session['user_id']}).fetchone().pwd
+
+        if not check_password_hash(user_pwd, current):
+            return render_template("apology.html", error="wrong password")
+
+        if not request.form.get("password"):
+            return render_template("apology.html", error="must provide password")
+
+        hash1 = generate_password_hash(request.form.get("password"))
+        hash2 = request.form.get("confirmation")
+
+        if not check_password_hash(hash1, hash2):
+            return render_template("apology.html", error="passwords do not match")
+
+        db.execute(text(
+            "UPDATE users SET pwd = :pwd WHERE id = :id"
+        ), {"pwd": hash1, "id": session['user_id']})
+        db.commit()
+
+        flash("Password changed!")
+        return redirect("/")
+
+    else:
+        return render_template("password.html")
+
+
+@app.route("/delete_account", methods=["GET", "POST"])
+@login_required
+def delete_user():
+    """Deletes user account"""
+
+    if request.method == "POST":
+        # Checks user credentials
+
+        if not request.form.get("username"):
+            return render_template("apology.html", error="must provide username")
+
+        if not request.form.get("password"):
+            return render_template("apology.html", error="must provide password")
+
+        rows = db.execute(text(
+            "SELECT * FROM users WHERE username = :user",
+        ), {"user": request.form.get("username")}).fetchall()
+
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0].pwd, request.form.get("password")):
+
+            return render_template("apology.html", error="invalid username and/or password")
+
+
+        # Proceeds to delete user account
+        db.execute(text(
+            "DELETE FROM users WHERE id = :id"
+        ), {"id": session['user_id']})
+
+        session.clear()
+
+        return redirect("/")
+
+    else:
+        return render_template("delete_acc.html")
 
 
 @app.route("/", methods=["GET"])
@@ -248,6 +325,7 @@ def add_product():
         """INSERT OR IGNORE INTO history (user_id, item_id, t_date, price) VALUES (:user, :item, :date, :price)"""
         ), {"user": session["user_id"], "item": id, "date": date, "price": price})
     db.commit()
+
     return redirect("/")
 
 @app.route("/delete/<id>")
@@ -278,6 +356,7 @@ def delete_product(id):
     ), {"id": selected.hist_id})
     db.commit()
 
+    flash("Deleted!")
     return redirect("/")
 
 
@@ -326,9 +405,18 @@ def product():
     except ZeroDivisionError:
         avg_days = 0
 
-    # TODO: change username return logic ####################
 
-    return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days, username=products[0].username)
+    # Checks if user is logged in and returns its username to the sidebar
+    try:
+        username = db.execute(text(
+            "SELECT username FROM users WHERE id = :id"
+        ), {"id": session['user_id']}).fetchone().username
+    except:
+        session.clear()
+        return redirect("/")
+
+
+    return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days, username=username)
 
 
 @app.route("/edit/<id>", methods=["GET", "POST"])
