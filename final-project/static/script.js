@@ -20,3 +20,13 @@ if (modal) {
     })
 }
 
+function togglePwd() {
+    document.querySelectorAll('.pwd').forEach(e=> {
+        if (e.type === "password") {
+            e.type = "text";
+        } else {
+            e.type = "password";
+        }
+    })
+}
+

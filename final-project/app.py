@@ -87,6 +87,7 @@ def login_required(f):
 
 
 @app.route("/logout")
+@login_required
 def logout():
     """Log user out"""
 
@@ -287,6 +288,7 @@ def add_product():
         if product.name == request.form.get("name").lower():
             name = product.name
             id = product.item_id
+            category = db.execute(text("SELECT cat_name FROM categories WHERE id = :id"), {"id": id}).fetchone().cat_name
 
     for product in products:
         if product.category == request.form.get("category").lower():
@@ -375,9 +377,9 @@ def product():
             JOIN users ON user_id = users.id
             JOIN items ON item_id = items.id
             JOIN categories ON items.cat_id = categories.id
-            WHERE user_id = :user
+            WHERE user_id = :user AND item_id = (SELECT item_id FROM history WHERE id = :item)
             ORDER BY t_date DESC"""
-    ), {"user": session["user_id"]}).fetchall()
+    ), {"user": session["user_id"], "item": int(request.args.get("id"))}).fetchall()
 
 
     # Calculates average days between each buy
