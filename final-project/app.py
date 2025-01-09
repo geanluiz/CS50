@@ -7,6 +7,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 
+import sys
+
 
 # Configure application
 app = Flask(__name__)
@@ -206,18 +208,18 @@ def delete_user():
 
         rows = db.execute(text(
             "SELECT * FROM users WHERE username = :user",
-        ), {"user": request.form.get("username")}).fetchall()
+        ), {"user": request.form.get("username")}).fetchone()
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0].pwd, request.form.get("password")):
-
+        if not rows or not check_password_hash(rows.pwd, request.form.get("password")):
             return render_template("apology.html", error="invalid username and/or password")
 
 
         # Proceeds to delete user account
         db.execute(text(
             "DELETE FROM users WHERE id = :id"
-        ), {"id": session['user_id']})
+        ), {"id": rows.id})
+        db.commit()
 
         session.clear()
 
