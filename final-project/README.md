@@ -58,7 +58,8 @@ The route for adding a new product also fetchs the products history then checks 
 
 After that, there's a function for editing the product entry, which gets the selected product info and returns to the modal box. Then, after the user inputs his changes, it checks if there was a change in the name or category of the product. In this case, it will create another record for this 'new' product. It then takes the other inputs from the user and makes an update in the db if it's the same item or inserts a new item, deleting the previous from the history.
 
->[!NOTE] I chose to delete it, because the alternatives like 'upsert' were too complicated in cases where the user changes different numbers of details.
+>[!NOTE]
+>I chose to delete it, because the alternatives like 'upsert' were too complicated in cases where the user changes different numbers of details.
 
 _delete_product_ simply takes the history id from passed by the form, and deletes the corresponding item from it.
 
