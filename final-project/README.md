@@ -73,10 +73,10 @@ Finally the _product_ route returns categories, history entries, the username an
  - [x] Delete items
  - [x] Change password
  - [x] Delete account
- - [] Reset password
- - [] Product images
- - [] Price chart
- - [] Category/price chart
- - [] Search bar
- - [] Edit categories
- - [] Partner sharing
+ - [ ] Reset password
+ - [ ] Product images
+ - [ ] Price chart
+ - [ ] Category/price chart
+ - [ ] Search bar
+ - [ ] Edit categories
+ - [ ] Partner sharing
