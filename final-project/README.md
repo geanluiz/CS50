@@ -2,14 +2,14 @@
 
 ### Video Demo:
 <p align="center">
- <a href="https://youtu.be/5Qu6BRT-JRI"><img alt="Video demo https://youtu.be/5Qu6BRT-JRI" src="https://img.youtube.com/vi/5Qu6BRT-JRI/maxresdefault.jpg" style="width: 500px"></a>
+    <a href="https://youtu.be/5Qu6BRT-JRI"><img alt="Video demo https://youtu.be/5Qu6BRT-JRI" src="https://img.youtube.com/vi/5Qu6BRT-JRI/maxresdefault.jpg" style="width: 600px"></a>
 </p>
 
 ## ℹ️ Introduction
 Product Tracker is a web app created for checking how long groceries usually lasts for you, so you can plan when to buy it again.\
 The idea came from a need I had in my family as I wanted to plan the monthly visits to the grocery store, so that each one would be more concise and less frequent.
 
-I used HTML, CSS with Bootstrap, Javascript, Python with Flask and SQL with SqlAlchemy in my project.
+I used HTML, CSS with Bootstrap, Javascript, Python with Flask and SQLite with SqlAlchemy in my project.
 Started of by the design so I drew in figma how I wanted it to look, then used [zzzcode](https://zzzcode.ai/html/code-generator) to generate the structure in HTML and CSS (as per my commits in December 10 and 12), but then proceeded to alter it to my liking
 
 ## 📂 Files
@@ -65,6 +65,48 @@ I chose to delete it, because the alternatives like 'upsert' were too complicate
 _delete_product_ simply takes the history id from passed by the form, and deletes the corresponding item from it.
 
 Finally the _product_ route returns categories, history entries, the username and the average number of days of the selected product to the main page.
+
+## Database
+In _products.db_ I created 4 tables: users, categories, items and history.
+
+- users: holds users ids, usernames and passwords
+- categories: stores categories ids and names
+
+<!-- https://mermaid.js.org/syntax/classDiagram.html -->
+
+<!-- CREATE TABLE users (
+    id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    pwd      TEXT NOT NULL
+);
+
+CREATE TABLE categories (
+    id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    cat_name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE items (
+    id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    item_name TEXT NOT NULL UNIQUE,
+    cat_id    INTEGER NOT NULL,
+        FOREIGN KEY (cat_id) REFERENCES categories(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+CREATE TABLE history (
+    id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL,
+    item_id    INTEGER NOT NULL,
+    t_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    price      NUMERIC NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE,
+        FOREIGN KEY (item_id) REFERENCES items(id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
+); -->
 
 ## 📋 Roadmap
  - [x] Add items
