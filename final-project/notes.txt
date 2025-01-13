@@ -4,6 +4,7 @@ https://www.chartjs.org/docs/latest/getting-started/
 
 https://zzzcode.ai/html/code-generator  december 10 and 12
 
+https://wordcount.com/
 
 key aspects(good outcome)
     -log in

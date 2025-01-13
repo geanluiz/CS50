@@ -7,8 +7,6 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import sys
-
 
 # Configure application
 app = Flask(__name__)
@@ -332,97 +330,6 @@ def add_product():
 
     return redirect("/")
 
-@app.route("/delete/<id>")
-@login_required
-def delete_product(id):
-    """Delete a product from the database"""
-
-    # Loads all categories and products from the database
-    products = db.execute(text(
-        """SELECT history.id AS hist_id
-            FROM history
-            JOIN users ON user_id = users.id
-            JOIN items ON item_id = items.id
-            JOIN categories ON items.cat_id = categories.id
-            WHERE user_id = :user
-            ORDER BY t_date DESC"""
-    ), {"user": session["user_id"]}).fetchall()
-
-
-    # Deletes the selected product from db
-    selected = None
-    for product in products:
-        if product.hist_id == int(id):
-            selected = product
-
-    db.execute(text(
-        "DELETE FROM history WHERE id = :id"
-    ), {"id": selected.hist_id})
-    db.commit()
-
-    flash("Deleted!")
-    return redirect("/")
-
-
-@app.route("/product", methods=["GET"])
-@login_required
-def product():
-    """render the product details in the index page"""
-
-    # Loads all categories and products from the database
-    categories = db.execute(text(
-        "SELECT id, cat_name AS name FROM categories"
-    )).fetchall()
-
-    products = db.execute(text(
-        """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date, username FROM history
-            JOIN users ON user_id = users.id
-            JOIN items ON item_id = items.id
-            JOIN categories ON items.cat_id = categories.id
-            WHERE user_id = :user AND item_id = (SELECT item_id FROM history WHERE id = :item)
-            ORDER BY t_date DESC"""
-    ), {"user": session["user_id"], "item": int(request.args.get("id"))}).fetchall()
-
-
-    # Calculates average days between each buy
-    selected = None
-    dt_diff = []
-
-    for product in products:
-        if product.hist_id == int(request.args.get("id")):
-            selected = product
-
-    for product in products:
-        if product.name == selected.name:
-            dt_diff.append(floor(int(product.t_date) / 86400))
-
-
-    dt_sum = 0
-    count = 0
-    for i in range(len(dt_diff)):
-        if i + 1 < len(dt_diff):
-            dt_sum += dt_diff[i] - dt_diff[i + 1]
-            count += 1
-
-    try:
-        avg_days = int(dt_sum / count)
-    except ZeroDivisionError:
-        avg_days = 0
-
-
-    # Checks if user is logged in and returns its username to the sidebar
-    try:
-        username = db.execute(text(
-            "SELECT username FROM users WHERE id = :id"
-        ), {"id": session['user_id']}).fetchone().username
-    except:
-        session.clear()
-        return redirect("/")
-
-
-    return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days, username=username)
-
-
 @app.route("/edit/<id>", methods=["GET", "POST"])
 @login_required
 def edit_product(id):
@@ -507,3 +414,77 @@ def edit_product(id):
             db.commit()
 
     return redirect("/")
+
+@app.route("/delete/<id>")
+@login_required
+def delete_product(id):
+    """Delete a product from the database"""
+
+    db.execute(text(
+        "DELETE FROM history WHERE id = :id"
+    ), {"id": id})
+    db.commit()
+
+    flash("Deleted!")
+    return redirect("/")
+
+
+@app.route("/product", methods=["GET"])
+@login_required
+def product():
+    """render the product details in the index page"""
+
+    # Loads all categories and products from the database
+    categories = db.execute(text(
+        "SELECT id, cat_name AS name FROM categories"
+    )).fetchall()
+
+    products = db.execute(text(
+        """SELECT history.id AS hist_id, items.id, item_name AS name, cat_name AS category, price, t_date, username FROM history
+            JOIN users ON user_id = users.id
+            JOIN items ON item_id = items.id
+            JOIN categories ON items.cat_id = categories.id
+            WHERE user_id = :user AND item_id = (SELECT item_id FROM history WHERE id = :item)
+            ORDER BY t_date DESC"""
+    ), {"user": session["user_id"], "item": int(request.args.get("id"))}).fetchall()
+
+
+    # Calculates average days between each buy
+    selected = None
+    dt_diff = []
+
+    for product in products:
+        if product.hist_id == int(request.args.get("id")):
+            selected = product
+
+    for product in products:
+        if product.name == selected.name:
+            dt_diff.append(floor(int(product.t_date) / 86400))
+
+
+    dt_sum = 0
+    count = 0
+    for i in range(len(dt_diff)):
+        if i + 1 < len(dt_diff):
+            dt_sum += dt_diff[i] - dt_diff[i + 1]
+            count += 1
+
+    try:
+        avg_days = int(dt_sum / count)
+    except ZeroDivisionError:
+        avg_days = 0
+
+
+    # Checks if user is logged in and returns its username to the sidebar
+    try:
+        username = db.execute(text(
+            "SELECT username FROM users WHERE id = :id"
+        ), {"id": session['user_id']}).fetchone().username
+    except:
+        session.clear()
+        return redirect("/")
+
+
+    return render_template("index.html", selected_product=selected, products=products, categories=categories, avg_days=avg_days, username=username)
+
+
