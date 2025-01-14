@@ -6,6 +6,12 @@ https://zzzcode.ai/html/code-generator  december 10 and 12
 
 https://wordcount.com/
 
+https://egghead.io/lessons/javascript-how-to-fork-and-clone-a-github-repository
+
+https://emojicopy.com/
+
+https://blog.rocketseat.com.br/como-fazer-um-bom-readme/#-licen-a
+
 key aspects(good outcome)
     -log in
     -enter items individually

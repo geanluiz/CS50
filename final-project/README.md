@@ -67,59 +67,31 @@ _delete_product_ simply takes the history id from passed by the form, and delete
 Finally the _product_ route returns categories, history entries, the username and the average number of days of the selected product to the main page.
 
 ## Database
-In _products.db_ I created 4 tables: users, categories, items and history.
+In _products.db_ I created 4 tables: users, categories, items and history with each columns as below.
 
-- users: holds users ids, usernames and passwords
-- categories: stores categories ids and names
+- users: users ids, usernames and passwords
+- categories: categories ids and names
+- items: items ids, items names and category id
+- history: entry id, user id, item id, date of transaction and price
 
-<!-- https://mermaid.js.org/syntax/classDiagram.html -->
-
-<!-- CREATE TABLE users (
-    id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    pwd      TEXT NOT NULL
-);
-
-CREATE TABLE categories (
-    id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    cat_name TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE items (
-    id        INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    item_name TEXT NOT NULL UNIQUE,
-    cat_id    INTEGER NOT NULL,
-        FOREIGN KEY (cat_id) REFERENCES categories(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-);
-
-CREATE TABLE history (
-    id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    user_id    INTEGER NOT NULL,
-    item_id    INTEGER NOT NULL,
-    t_date INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    price      NUMERIC NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-            ON UPDATE CASCADE
-            ON DELETE CASCADE,
-        FOREIGN KEY (item_id) REFERENCES items(id)
-            ON UPDATE CASCADE
-            ON DELETE CASCADE
-); -->
+In _items_, the category id references the categories table and in _history_, user id and item id references users table and items table respectively
 
 ## 📋 Roadmap
- - [x] Add items
- - [x] Return average days
- - [x] Alow multiple users
- - [x] Edit items
- - [x] Delete items
- - [x] Change password
- - [x] Delete account
- - [ ] Reset password
- - [ ] Product images
- - [ ] Price chart
- - [ ] Category/price chart
- - [ ] Search bar
- - [ ] Edit categories
- - [ ] Partner sharing
+- [x] Add items
+- [x] Return average days
+- [x] Alow multiple users
+- [x] Edit items
+- [x] Delete items
+- [x] Change password
+- [x] Delete account
+- [ ] Reset password
+- [ ] Product images
+- [ ] Price chart
+- [ ] Category/price chart
+- [ ] Search bar
+- [ ] Edit categories
+- [ ] Partner sharing
+
+<br>
+This was CS50x!
+
